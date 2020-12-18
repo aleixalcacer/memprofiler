@@ -6,6 +6,7 @@ import time
 import psutil
 import os
 import plotly.graph_objects as go
+import re
 
 
 def current_memory(pid):
@@ -19,7 +20,7 @@ def current_time():
 
 
 def sampling_memory(pipe: connection.Connection, pid, interval):
-    pipe.send(0)
+    pipe.send(0)  # Start sampling memory
     time_prof = []
     start_time = current_time()
     memory_prof = []
@@ -28,7 +29,8 @@ def sampling_memory(pipe: connection.Connection, pid, interval):
     while True:
         memory_prof.append(current_memory(pid) - start_memory)
         time_prof.append(current_time() - start_time)
-        if pipe.poll(interval):
+
+        if pipe.poll(interval):  # Check if cell exec finishes
             break
 
     time_delta = current_time() - start_time
@@ -51,46 +53,63 @@ class MemProfiler(Magics):
 
     @cell_magic
     @magic_arguments()
-    @argument('-i', '--interval', type=float, help='Sampling period (in seconds), defaults to 0.01', default=0.01)
-    @argument('label', type=str, help='Memory profile label.')
+    @argument("-i", "--interval", type=float, help="Sampling period (in seconds)", default=0.01)
+    @argument("--plot", action='store_true', help="Plot the memory profile")
+    @argument("label", type=str, help="Memory profile label")
     def mprof_run(self, line, cell):
         args = parse_argstring(self.mprof_run, line)
         interval = args.interval
         line = args.label
-
-        import gc
-        gc.collect()
 
         child_conn, parent_conn = Pipe()
 
         p = Process(target=sampling_memory, args=(child_conn, os.getpid(), interval))
         p.daemon = True
         p.start()
-        parent_conn.recv()  # start sampling memory
+        parent_conn.recv()  # Check if sampling process starts
         self.ip.run_cell(cell)
-        parent_conn.send(0)  # finish sampling memory
+        parent_conn.send(0)  # Stop sampling memory
 
         memory_prof, memory_delta, time_prof, time_delta = parent_conn.recv()
 
         self.memory_profiles[line] = memory_prof
         self.time_profiles[line] = time_prof
+        memory_peak = max(memory_prof)
 
-        print(f"Memory usage: {memory_delta:.4f} MiB")
-        print(f"Elapsed time: {time_delta:.4f} s")
+        print(f"Memory profiler: Used {memory_delta:.4f} MiB "
+              f"(peak of {memory_peak:.4f} MiB) in {time_delta:.4f} s")
+
+        if args.plot:
+            self.mprof_plot(line)
 
     @line_magic
     @magic_arguments()
-    @argument('profiles', type=str, help='Profiles labels.')
+    @argument("--title", type=str, help="Set the plot title", default="Memory profile")
+    @argument("labels", type=str, nargs="*", help="Profiles labels.")
     def mprof_plot(self, line):
-        labels = line.split()
+        args = parse_argstring(self.mprof_plot, line)
 
+        # Find regex matches
+        keys = self.memory_profiles.keys()
+        matches = set()
+        for regex in args.labels:
+            matches.update([string for string in keys if re.match(regex, string)])
+
+        # Plot memory profiles
         fig = go.Figure()
-        for key in labels:
+        for key in matches:
             y = self.memory_profiles[key]
             x = self.time_profiles[key]
-            fig.add_trace(go.Scatter(x=x, y=y, mode='lines', name=key))
+            fig.add_trace(go.Scatter(x=x, y=y, mode="lines", name=key))
 
         fig.update_layout(
+            title={
+                'text': args.title.replace("\"", "").replace("\'", ""),
+                'y': 0.9,
+                'x': 0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'
+            },
             xaxis_title="Time (in seconds)",
             yaxis_title="Memory used (in MiB)",
         )
