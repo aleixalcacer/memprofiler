@@ -18,12 +18,14 @@ python setup.py install
 
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+Use this space to show useful examples of how a project can be used. Additional screenshots,
+code examples and demos work well in this space. You may also link to more resources.
 
 
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are what make the open source community such an amazing place to be learn,
+inspire, and create. Any contributions you make are **greatly appreciated**.
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -34,5 +36,5 @@ Contributions are what make the open source community such an amazing place to b
 
 ## License
 
-Distributed under the BSD-3 License. See `LICENSE` for more information.
+Distributed under the BSD 3-Clause License. See [LICENSE](LICENSE) for more information.
 
