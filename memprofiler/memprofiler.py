@@ -7,12 +7,9 @@ import psutil
 import os
 import plotly.graph_objects as go
 import re
-import plotly
-
-plotly.offline.init_notebook_mode()
 
 
-def current_memory(pid):
+def current_memory(pid: int):
     process = psutil.Process(pid)
     mem = process.memory_info().rss
     return mem / 2 ** 20
@@ -22,7 +19,7 @@ def current_time():
     return time.time()
 
 
-def sampling_memory(pipe: connection.Connection, pid, interval):
+def sampling_memory(pipe: connection.Connection, pid: int, interval: float):
     pipe.send(0)  # Start sampling memory
     time_prof = []
     start_time = current_time()
@@ -63,7 +60,7 @@ class MemProfiler(Magics):
     @argument("-i", "--interval", type=float, help="Sampling period (in seconds)", default=0.01)
     @argument("-p", "--plot", action='store_true', help="Plot the memory profile")
     @argument("label", type=str, help="Memory profile label")
-    def mprof_run(self, line, cell):
+    def mprof_run(self, line: str, cell: str):
         args = parse_argstring(self.mprof_run, line)
         interval = args.interval
         line = args.label
@@ -93,7 +90,7 @@ class MemProfiler(Magics):
     @magic_arguments()
     @argument("-t", "--title", type=str, help="Set the plot title", default="Memory profile")
     @argument("labels", type=str, nargs="*", help="Profiles labels.")
-    def mprof_plot(self, line):
+    def mprof_plot(self, line: str):
         args = parse_argstring(self.mprof_plot, line)
 
         # Find regex matches
@@ -121,4 +118,4 @@ class MemProfiler(Magics):
             yaxis_title="Memory used (in MiB)",
         )
 
-        plotly.offline.iplot(fig)
+        fig.show()
