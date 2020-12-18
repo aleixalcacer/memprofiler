@@ -25,27 +25,31 @@ def sampling_memory(pipe: connection.Connection, pid, interval):
     start_time = current_time()
     memory_prof = []
     start_memory = current_memory(pid)
-
+    steps_prof = []
     while True:
         memory_prof.append(current_memory(pid) - start_memory)
         time_prof.append(current_time() - start_time)
 
         if pipe.poll(interval):  # Check if cell exec finishes
-            break
+            data = pipe.recv()
+
+            if isinstance(data, str):
+                steps_prof.append(current_time() - start_time)
+            else:
+                break
 
     time_delta = current_time() - start_time
     memory_delta = current_memory(pid) - start_memory
 
     pipe.send((memory_prof, memory_delta, time_prof, time_delta))
+    pipe.send(steps_prof)
 
 
 @magics_class
 class MemProfiler(Magics):
 
-    keep_sampling = False
     memory_profiles = {}
     time_profiles = {}
-    current_interval = 0.01
     ip = get_ipython()
 
     def __init__(self, shell):
@@ -54,7 +58,7 @@ class MemProfiler(Magics):
     @cell_magic
     @magic_arguments()
     @argument("-i", "--interval", type=float, help="Sampling period (in seconds)", default=0.01)
-    @argument("--plot", action='store_true', help="Plot the memory profile")
+    @argument("-p", "--plot", action='store_true', help="Plot the memory profile")
     @argument("label", type=str, help="Memory profile label")
     def mprof_run(self, line, cell):
         args = parse_argstring(self.mprof_run, line)
@@ -84,7 +88,7 @@ class MemProfiler(Magics):
 
     @line_magic
     @magic_arguments()
-    @argument("--title", type=str, help="Set the plot title", default="Memory profile")
+    @argument("-t", "--title", type=str, help="Set the plot title", default="Memory profile")
     @argument("labels", type=str, nargs="*", help="Profiles labels.")
     def mprof_plot(self, line):
         args = parse_argstring(self.mprof_plot, line)
