@@ -1,25 +1,18 @@
-# memprofiler
+# memprofiler:
 
 This is a module for monitoring memory usage of Jupyter notebook cells.
 
 
 ## Installation
 
-From pip:
+It can be installed as a typical Python source package from PyPi using pip:
 ```
 pip install memprofiler
 ```
 
-From source:
-```
-python setup.py install
-``` 
+## Documentation
 
-
-## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots,
-code examples and demos work well in this space. You may also link to more resources.
+The official documentation is hosted on Github Pages: https://aleixalcacer.github.io/memprofiler.
 
 
 ## Contributing
