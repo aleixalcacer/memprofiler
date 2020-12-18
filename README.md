@@ -1,6 +1,6 @@
-# memprofiler:
+# memprofiler
 
-This is a module for monitoring memory usage of Jupyter notebook cells.
+This is a light-weight module for monitoring memory usage of Jupyter notebook cells.
 
 
 ## Installation
