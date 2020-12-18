@@ -1,6 +1,6 @@
 # memprofiler
 
-This is a light-weight IPython extension for monitoring memory usage of Jupyter notebook cells.
+This is a light-weight extension for monitoring memory usage of Jupyter notebook cells.
 
 
 ## Installation
