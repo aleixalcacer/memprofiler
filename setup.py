@@ -23,7 +23,7 @@ setup(
     author_email='aleixalcacer@gmail.com',
     url='https://github.com/aleixalcacer/memprofiler',
     py_modules=['memprofiler'],
-    install_requires=['psutil', 'ipython', 'matplotlib', 'numpy'],
+    install_requires=['psutil', 'ipython', 'plotly'],
     python_requires='>=3.4',
     classifiers=[_f for _f in CLASSIFIERS.split('\n') if _f],
     license='MIT'
