@@ -7,6 +7,9 @@ import psutil
 import os
 import plotly.graph_objects as go
 import re
+import plotly
+
+plotly.offline.init_notebook_mode()
 
 
 def current_memory(pid):
@@ -118,4 +121,4 @@ class MemProfiler(Magics):
             yaxis_title="Memory used (in MiB)",
         )
 
-        fig.show()
+        plotly.offline.iplot(fig)
