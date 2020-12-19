@@ -2,10 +2,18 @@
 ```
 
 ```{toctree}
-:maxdepth: 2
 :caption: Getting Started
 :hidden:
 
-reference
+installation
 tutorial
+reference
+```
+
+```{toctree}
+:caption: Development
+:hidden:
+
+Code of Conduct <code-of-conduct>
+Contributing <contributing>
 ```
