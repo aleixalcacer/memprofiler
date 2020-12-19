@@ -15,7 +15,7 @@ pip install memprofiler
 Usage
 -----
 
- .. include:: .github/CODE_OF_CONDUCT.md
+ .. include:: usage.rst
 
 
 Contributing
