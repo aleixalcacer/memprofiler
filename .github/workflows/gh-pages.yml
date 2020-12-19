@@ -19,9 +19,8 @@ jobs:
       - name: Build docs
         uses: ammaraskar/sphinx-action@master
         with:
-          pre-build-command: "apt-get install pandoc"
+          pre-build-command: "apt-get install -y pandoc"
           docs-folder: "docs/"
-
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
