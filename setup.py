@@ -5,12 +5,11 @@ CLASSIFIERS = """\
 Development Status :: 5 - Production/Stable
 Environment :: Console
 Intended Audience :: Developers
-License :: Free To Use But Restricted
+License :: OSI Approved :: BSD License
 Natural Language :: English
 Operating System :: OS Independent
 Programming Language :: Python
 Topic :: Software Development :: Libraries :: Python Modules
-Topic :: Software Development :: Testing
 """
 
 
@@ -19,6 +18,7 @@ setup(
     description="A simple extension for monitoring memory usage of Jupyter notebook cells.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
+    license="BSD (3-clause)",
     version="0.1.1.dev0",
     author="Aleix Alcacer",
     author_email="aleixalcacer@gmail.com",
