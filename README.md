@@ -63,4 +63,5 @@ inspire, and create. Any contributions you make are **greatly appreciated**!
 
 ## License
 
-Distributed under the BSD 3-Clause License. See [LICENSE](LICENSE) for more information.
+Distributed under the BSD 3-Clause License.
+See [LICENSE](https://github.com/aleixalcacer/memprofiler/blob/HEAD/LICENSE) for more information.
