@@ -46,7 +46,7 @@ Run memory profiler during cell execution. (*cell_magic*)
 Plot memory profiler results. (*line_magic*)
 
 - positional arguments:
-    - profile_ids \
+    -* profile_ids* \
         Profile identifiers made by mprof_run. Supports regex.
 
 
