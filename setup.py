@@ -1,7 +1,7 @@
 from setuptools import setup
 
 
-CLASSIFIERS =  """\
+CLASSIFIERS = """\
 Development Status :: 5 - Production/Stable
 Environment :: Console
 Intended Audience :: Developers
@@ -19,7 +19,7 @@ setup(
     description="A simple extension for monitoring memory usage of Jupyter notebook cells.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    version="2020.1.3.dev0",
+    version="0.1.0",
     author="Aleix Alcacer",
     author_email="aleixalcacer@gmail.com",
     url="https://github.com/aleixalcacer/memprofiler",
