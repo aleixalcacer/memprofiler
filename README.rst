@@ -1,23 +1,25 @@
-# memprofiler
+memprofiler
+===========
 
 `memprofiler` is a light-weight extension for monitoring memory usage of Jupyter notebook cells.
 
-# Why ?
 
-## Installation
+Installation
+------------
 
 It can be installed as a typical Python source package from PyPi using pip:
 ```
 pip install memprofiler
 ```
-## Usage
+
+Usage
+-----
 
  .. include:: .github/CODE_OF_CONDUCT.md
 
 
-TODO
-
-## Contributing
+Contributing
+------------
 
 Contributions are what make the open source community such an amazing place to be learn,
 inspire, and create. Any contributions you make are **greatly appreciated**!
