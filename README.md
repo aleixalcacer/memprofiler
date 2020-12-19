@@ -1,5 +1,7 @@
 # memprofiler
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/aleixalcacer/memprofiler/docs?filepath=usage.ipynb)
+
 `memprofiler` is a light-weight extension for monitoring memory usage of Jupyter notebook cells.
 
 
@@ -13,8 +15,7 @@ pip install memprofiler
 
 ## Usage
 
-TODO
-
+A basic usage of this extension can be obtained at https://mybinder.org/v2/gh/aleixalcacer/memprofiler/docs?filepath=tutorial.ipynb.
 
 ## Reference
 
