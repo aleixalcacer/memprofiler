@@ -1,25 +1,43 @@
-memprofiler
-===========
+# memprofiler
 
 `memprofiler` is a light-weight extension for monitoring memory usage of Jupyter notebook cells.
 
 
-Installation
-------------
+## Installation
 
 It can be installed as a typical Python source package from PyPi using pip:
+
 ```
 pip install memprofiler
 ```
 
-Usage
------
+## Usage
 
-.. include:: usage.rst
+TODO
 
 
-Contributing
-------------
+## Reference
+
+### mprof_run
+
+`%%mprof_run [-i INTERVAL] [-p] profile_id`
+
+Run memory profiler during cell execution. (*cell_magic*)
+
+- positional arguments:
+  
+  - profile_id
+    Profile identifier to label the results.
+    
+- optional arguments:
+  
+  - -i INTERVAL, --interval INTERVAL
+    Sampling period (in seconds), default 0.01.
+  - -p, --plot
+    Plot the memory profile.
+
+
+## Contributing
 
 Contributions are what make the open source community such an amazing place to be learn,
 inspire, and create. Any contributions you make are **greatly appreciated**!
