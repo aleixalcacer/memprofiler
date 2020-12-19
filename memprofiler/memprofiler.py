@@ -120,4 +120,4 @@ class MemProfiler(Magics):
             yaxis_title="Memory used (in MiB)",
         )
 
-        fig.show(renderer="png")
+        fig.show()
