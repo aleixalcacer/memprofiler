@@ -15,14 +15,14 @@ pip install memprofiler
 
 ## Usage
 
-Aa basic example of how to use this extension can be found in
+A basic example of how to use this extension can be found in
 [this Jupyter notebook](https://mybinder.org/v2/gh/aleixalcacer/memprofiler/docs?filepath=examples/basic.ipynb).
 
 ## Reference
 
 ### mprof_run
 
-*`%%mprof_run [-i INTERVAL] [-p] profile_id`*
+*%%mprof_run [-i INTERVAL] [-p] profile_id*
 
 Run memory profiler during cell execution. (*cell_magic*)
 
@@ -59,3 +59,8 @@ inspire, and create. Any contributions you make are **greatly appreciated**!
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+
+## License
+
+Distributed under the BSD 3-Clause License. See [LICENSE](LICENSE) for more information.
