@@ -20,21 +20,21 @@ TODO
 
 ### mprof_run
 
-`%%mprof_run [-i INTERVAL] [-p] profile_id`
+*%%mprof_run [-i INTERVAL] [-p] profile_id*
 
 Run memory profiler during cell execution. (*cell_magic*)
 
 - positional arguments:
   
   - *profile_id*
-    Profile identifier to label the results.
+      Profile identifier to label the results.
     
 - optional arguments:
   
   - *-i INTERVAL*, *--interval INTERVAL*
-    Sampling period (in seconds), default 0.01.
+      Sampling period (in seconds), default 0.01.
   - *-p*, *--plot*
-    Plot the memory profile.
+      Plot the memory profile.
 
 
 ## Contributing
