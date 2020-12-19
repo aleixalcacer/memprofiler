@@ -19,7 +19,7 @@ setup(
     description="A light-weight extension for monitoring memory usage of Jupyter notebook cells",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    version="2020.1.1",
+    version="2020.1.2",
     author="Aleix Alcacer",
     author_email="aleixalcacer@gmail.com",
     url="https://github.com/aleixalcacer/memprofiler",
