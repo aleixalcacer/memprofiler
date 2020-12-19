@@ -1,3 +1,5 @@
-.
 sphinx
 nbsphinx
+psutil
+ipython
+plotly
