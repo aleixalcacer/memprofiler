@@ -20,7 +20,7 @@ TODO
 
 ### mprof_run
 
-*``%%mprof_run [-i INTERVAL] [-p] profile_id``*
+*`%%mprof_run [-i INTERVAL] [-p] profile_id`*
 
 Run memory profiler during cell execution. (*cell_magic*)
 
