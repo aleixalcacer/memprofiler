@@ -1,5 +1,6 @@
 # memprofiler
 
+![PyPI](https://img.shields.io/pypi/v/memprofiler)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/aleixalcacer/memprofiler/HEAD?filepath=examples/)
 
 `memprofiler` is a light-weight extension for monitoring memory usage of Jupyter notebook cells.
