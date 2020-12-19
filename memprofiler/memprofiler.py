@@ -55,15 +55,16 @@ class MemProfiler(Magics):
     def __init__(self, shell):
         super(MemProfiler, self).__init__(shell)
 
-    @cell_magic
     @magic_arguments()
-    @argument("-i", "--interval", type=float, help="Sampling period (in seconds)", default=0.01)
-    @argument("-p", "--plot", action='store_true', help="Plot the memory profile")
-    @argument("label", type=str, help="Memory profile label")
+    @argument("-i", "--interval", type=float, help="Sampling period (in seconds), default 0.01.", default=0.01)
+    @argument("-p", "--plot", action='store_true', help="Plot the memory profile.")
+    @argument("profile_id", type=str, help="Profile identifier to label the results.")
+    @cell_magic
     def mprof_run(self, line: str, cell: str):
+        """Run memory profiler during cell execution. (*cell_magic*)"""
         args = parse_argstring(self.mprof_run, line)
         interval = args.interval
-        line = args.label
+        line = args.profile_id
 
         child_conn, parent_conn = Pipe()
 
@@ -86,17 +87,18 @@ class MemProfiler(Magics):
         if args.plot:
             self.mprof_plot(line)
 
-    @line_magic
     @magic_arguments()
-    @argument("-t", "--title", type=str, help="Set the plot title", default="Memory profile")
-    @argument("labels", type=str, nargs="*", help="Profiles labels.")
+    @argument("-t", "--title", type=str, help="String shown as plot title.", default="Memory profile")
+    @argument("profile_ids", type=str, nargs="+", help="Profile identifiers made by mprof_run. Supports regex.")
+    @line_magic
     def mprof_plot(self, line: str):
+        """Plot memory profiler results. (*line_magic*)"""
         args = parse_argstring(self.mprof_plot, line)
 
         # Find regex matches
         keys = self.memory_profiles.keys()
         matches = set()
-        for regex in args.labels:
+        for regex in args.profile_ids:
             matches.update([string for string in keys if re.match(regex, string)])
 
         # Plot memory profiles
