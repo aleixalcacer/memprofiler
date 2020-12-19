@@ -19,7 +19,7 @@ jobs:
       - name: Build docs
         uses: ammaraskar/sphinx-action@master
         with:
-          pre-build-command: "apt install pandoc"
+          pre-build-command: "apt-get install pandoc"
           docs-folder: "docs/"
 
 
