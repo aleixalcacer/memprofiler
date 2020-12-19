@@ -15,7 +15,7 @@ Operating System :: OS Independent
 setup(
     name="memprofiler",
     description="A light-weight extension for monitoring memory usage of Jupyter notebook cells",
-    long_description=open("README.md").read(),
+    long_description=open("README.rst").read(),
     version="2020.1.0",
     author="Aleix Alcacer",
     author_email="aleixalcacer@gmail.com",
