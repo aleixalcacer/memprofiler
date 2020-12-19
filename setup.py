@@ -16,7 +16,7 @@ Topic :: Software Development :: Testing
 
 setup(
     name="memprofiler",
-    description="A light-weight extension for monitoring memory usage of Jupyter notebook cells",
+    description="A simple extension for monitoring memory usage of Jupyter notebook cells.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     version="2020.1.3.dev0",
