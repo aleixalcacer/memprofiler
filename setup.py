@@ -1,14 +1,16 @@
 from setuptools import setup
 
 
-CLASSIFIERS = """\
+CLASSIFIERS =  """\
 Development Status :: 5 - Production/Stable
-Intended Audience :: Science/Research
+Environment :: Console
 Intended Audience :: Developers
-License :: OSI Approved :: BSD License
-Programming Language :: Python :: 3
-Topic :: Software Development
+License :: Free To Use But Restricted
+Natural Language :: English
 Operating System :: OS Independent
+Programming Language :: Python
+Topic :: Software Development :: Libraries :: Python Modules
+Topic :: Software Development :: Testing
 """
 
 
@@ -16,6 +18,7 @@ setup(
     name="memprofiler",
     description="A light-weight extension for monitoring memory usage of Jupyter notebook cells",
     long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
     version="2020.1.0",
     author="Aleix Alcacer",
     author_email="aleixalcacer@gmail.com",
@@ -23,6 +26,5 @@ setup(
     packages=["memprofiler"],
     install_requires=["psutil", "ipython", "plotly"],
     python_requires=">=3.4",
-    classifiers=[_f for _f in CLASSIFIERS.split("\n") if _f],
-    license=open("LICENSE").read(),
+    classifiers=filter(None, CLASSIFIERS.split("\n")),
 )
