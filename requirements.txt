@@ -1,3 +1,6 @@
-.
-# Tutorial
+# memprofiler
+psutil
+ipython
+plotly
+# examples
 numpy
