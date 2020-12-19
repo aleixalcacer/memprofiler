@@ -26,14 +26,14 @@ Run memory profiler during cell execution. (*cell_magic*)
 
 - positional arguments:
   
-  - profile_id
+  - *profile_id*
     Profile identifier to label the results.
     
 - optional arguments:
   
-  - -i INTERVAL, --interval INTERVAL
+  - *-i INTERVAL*, *--interval INTERVAL*
     Sampling period (in seconds), default 0.01.
-  - -p, --plot
+  - *-p*, *--plot*
     Plot the memory profile.
 
 
