@@ -15,7 +15,7 @@ pip install memprofiler
 Usage
 -----
 
- .. include:: usage.rst
+.. include:: usage.rst
 
 
 Contributing
