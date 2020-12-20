@@ -18,7 +18,7 @@ pip install memprofiler
 ## Usage
 
 A basic example of how to use this extension can be found in
-[this Jupyter notebook](https://mybinder.org/v2/gh/aleixalcacer/memprofiler/HEAD?filepath=examples/basic.ipynb).
+[this interactive Jupyter notebook](https://mybinder.org/v2/gh/aleixalcacer/memprofiler/HEAD?filepath=examples/basic.ipynb).
 
 
 ## Reference
