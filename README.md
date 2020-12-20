@@ -14,10 +14,12 @@ It can be installed as a typical Python source package from PyPi using pip:
 pip install memprofiler
 ```
 
+
 ## Usage
 
 A basic example of how to use this extension can be found in
 [this Jupyter notebook](https://mybinder.org/v2/gh/aleixalcacer/memprofiler/HEAD?filepath=examples/basic.ipynb).
+
 
 ## Reference
 
@@ -30,14 +32,15 @@ Run memory profiler during cell execution. (*cell_magic*)
 - positional arguments:
     - *profile_id* \
         Profile identifier to label the results.
-    
+
 - optional arguments:
-  
+
     - *-i INTERVAL*, *--interval INTERVAL* \
         Sampling period (in seconds), default 0.01.
-      
+
     - *-p*, *--plot* \
         Plot the memory profile.
+
 
 ### mprof_plot
 
@@ -66,3 +69,8 @@ inspire, and create. Any contributions you make are **greatly appreciated**!
 
 Distributed under the BSD 3-Clause License.
 See [LICENSE](https://github.com/aleixalcacer/memprofiler/blob/HEAD/LICENSE) for more information.
+
+
+## Acknowledgements
+
+- [@FrancescAlted](https://github.com/FrancescAlted)
