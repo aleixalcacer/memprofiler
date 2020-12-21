@@ -22,34 +22,33 @@ def current_time():
 def sampling_memory(pipe: connection.Connection, pid: int, interval: float):
     pipe.send(0)  # Start sampling memory
     time_prof = []
-    start_time = current_time()
+    time_start = current_time()
     memory_prof = []
-    start_memory = current_memory(pid)
-    steps_prof = []
+    memory_start = current_memory(pid)
+
     while True:
-        memory_prof.append(current_memory(pid) - start_memory)
-        time_prof.append(current_time() - start_time)
+        memory_prof.append(current_memory(pid) - memory_start)
+        time_prof.append(current_time() - time_start)
 
         if pipe.poll(interval):  # Check if cell exec finishes
-            data = pipe.recv()
+            break
+    time_prof.append(current_time() - time_start)
+    memory_prof.append(current_memory(pid) - memory_start)
 
-            if isinstance(data, str):
-                steps_prof.append(current_time() - start_time)
-            else:
-                break
-
-    time_delta = current_time() - start_time
-    memory_delta = current_memory(pid) - start_memory
-
-    pipe.send((memory_prof, memory_delta, time_prof, time_delta))
-    pipe.send(steps_prof)
+    profile = {"m_prof": memory_prof,
+               "m_peak": max(memory_prof),
+               "m_delta": memory_prof[-1],
+               "m_total": memory_prof[-1] + memory_start,
+               "t_prof": time_prof,
+               "t_delta": time_prof[-1]
+               }
+    pipe.send(profile)
 
 
 @magics_class
 class MemProfiler(Magics):
 
-    memory_profiles = {}
-    time_profiles = {}
+    profiles = {}
     ip = get_ipython()
 
     def __init__(self, shell):
@@ -75,14 +74,11 @@ class MemProfiler(Magics):
         self.ip.run_cell(cell)
         parent_conn.send(0)  # Stop sampling memory
 
-        memory_prof, memory_delta, time_prof, time_delta = parent_conn.recv()
-
-        self.memory_profiles[line] = memory_prof
-        self.time_profiles[line] = time_prof
-        memory_peak = max(memory_prof)
-
-        print(f"Memory profiler: Used {memory_delta:.4f} MiB "
-              f"(peak of {memory_peak:.4f} MiB) in {time_delta:.4f} s")
+        profile = parent_conn.recv()
+        self.profiles[line] = profile
+        print(f"memprofiler: used {profile['m_delta']:.2f} MiB RAM "
+              f"(peak of {profile['m_peak']:.2f} MiB) in {profile['t_delta']:.4f} s, "
+              f"total RAM usage {profile['m_total']:.2f} MiB")
 
         if args.plot:
             self.mprof_plot(line)
@@ -96,7 +92,7 @@ class MemProfiler(Magics):
         args = parse_argstring(self.mprof_plot, line)
 
         # Find regex matches
-        keys = self.memory_profiles.keys()
+        keys = self.profiles.keys()
         matches = set()
         for regex in args.profile_ids:
             matches.update([string for string in keys if re.match(regex, string)])
@@ -104,8 +100,8 @@ class MemProfiler(Magics):
         # Plot memory profiles
         fig = go.Figure()
         for key in matches:
-            y = self.memory_profiles[key]
-            x = self.time_profiles[key]
+            y = self.profiles[key]["m_prof"]
+            x = self.profiles[key]["t_prof"]
             fig.add_trace(go.Scatter(x=x, y=y, mode="lines", name=key))
 
         fig.update_layout(
