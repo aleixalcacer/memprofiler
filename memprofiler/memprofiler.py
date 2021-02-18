@@ -99,7 +99,7 @@ class MemProfiler(Magics):
 
         # Plot memory profiles
         fig = go.Figure()
-        for key in matches:
+        for key in sorted(matches):
             y = self.profiles[key]["m_prof"]
             x = self.profiles[key]["t_prof"]
             fig.add_trace(go.Scatter(x=x, y=y, mode="lines", name=key))
