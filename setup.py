@@ -15,7 +15,7 @@ Topic :: Software Development :: Libraries :: Python Modules
 
 setup(
     name="memprofiler",
-    description="A simple extension for monitoring memory usage of Jupyter notebook cells.",
+    description="A simple IPython extension for monitoring memory usage of Jupyter notebook cells.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     license="BSD (3-clause)",
