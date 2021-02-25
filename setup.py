@@ -26,5 +26,5 @@ setup(
     packages=["memprofiler"],
     install_requires=["psutil", "ipython", "plotly"],
     python_requires=">=3.4",
-    classifiers=filter(None, CLASSIFIERS.split("\n")),
+    classifiers=list(filter(None, CLASSIFIERS.split("\n"))),
 )
