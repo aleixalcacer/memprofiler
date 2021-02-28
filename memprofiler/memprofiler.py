@@ -2,11 +2,106 @@ from IPython.core.magic import Magics, magics_class, cell_magic, line_magic
 from IPython.core.magic_arguments import magic_arguments, argument, parse_argstring
 from IPython import get_ipython
 from multiprocessing import Process, Pipe, connection
+import itertools
 import time
 import psutil
 import os
 import plotly.graph_objects as go
+import plotly.express as px
+from dataclasses import dataclass
 import re
+import gc
+
+
+colors = px.colors.qualitative.Set1
+dashes = ['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']
+sep = "-"
+
+
+def line_chart(matches: list, args):
+    l0 = "l0" if args.groupby == 1 else "l1"
+    l1 = "l1" if args.groupby == 1 else "l0"
+
+    fig = go.Figure()
+    for i, (group, matches) in enumerate(matches):
+        for j, e in enumerate(matches):
+            x = e.time_prof
+            y = e.memory_prof
+            fig.add_trace(go.Scatter(name=getattr(e, l0) + ": " + getattr(e, l1),
+                                     x=x,
+                                     y=y,
+                                     mode="lines",
+                                     legendgroup=i,
+                                     marker_color=colors[i],
+                                     line=dict(dash=dashes[j])
+                                     )
+                          )
+
+    fig.update_xaxes(title_text="Time (in seconds)")
+    fig.update_yaxes(title_text="Memory used (in MiB)")
+    return fig
+
+
+def bar_chart(matches: list, args):
+    l1 = "l1" if args.groupby == 1 else "l0"
+
+    if args.variable == "time":
+        attr = "time_delta"
+        yaxes_title = "Time (in seconds)"
+    else:
+        attr = "memory_peak"
+        yaxes_title = "Memory used (in MiB)"
+
+    fig = go.Figure()
+    for i, (group, matches) in enumerate(matches):
+        y = [getattr(e, attr) for e in matches]
+        x = [getattr(e, l1) for e in matches]
+        fig.add_trace(go.Bar(name=group,
+                             x=x,
+                             y=y,
+                             marker_color=colors[i],
+                             )
+                      )
+
+    fig.update_yaxes(title_text=yaxes_title)
+    fig.update_layout(
+        barmode=args.barmode,
+    )
+    return fig
+
+
+def update_layout(fig, args):
+    fig.update_layout(
+        title={
+            'text': args.title.replace("\"", "").replace("\'", ""),
+            'y': 0.9,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'
+        },
+        showlegend=True
+    )
+    return fig
+
+
+@dataclass
+class Profile:
+    l0: str
+    l1: str
+    memory_prof: list
+    memory_peak: float
+    memory_delta: float
+    memory_total: float
+    time_prof: list
+    time_delta: float
+
+    def __hash__(self):
+        return hash((self.l0 + sep + self.l1))
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+        return self.l0 + sep + self.l1 == other.l0 + sep + other.l1
 
 
 def current_memory(pid: int):
@@ -19,7 +114,7 @@ def current_time():
     return time.time()
 
 
-def sampling_memory(pipe: connection.Connection, pid: int, interval: float):
+def sampling_memory(pipe: connection.Connection, pid: int, interval: float, l0: str, l1: str):
     pipe.send(0)  # Start sampling memory
     time_prof = []
     time_start = current_time()
@@ -35,13 +130,14 @@ def sampling_memory(pipe: connection.Connection, pid: int, interval: float):
     time_prof.append(current_time() - time_start)
     memory_prof.append(current_memory(pid) - memory_start)
 
-    profile = {"m_prof": memory_prof,
-               "m_peak": max(memory_prof),
-               "m_delta": memory_prof[-1],
-               "m_total": memory_prof[-1] + memory_start,
-               "t_prof": time_prof,
-               "t_delta": time_prof[-1]
-               }
+    profile = Profile(l0,
+                      l1,
+                      memory_prof,
+                      max(memory_prof),
+                      memory_prof[-1],
+                      memory_prof[-1] + memory_start,
+                      time_prof,
+                      time_prof[-1])
     pipe.send(profile)
 
 
@@ -54,66 +150,118 @@ class MemProfiler(Magics):
     def __init__(self, shell):
         super(MemProfiler, self).__init__(shell)
 
+
     @magic_arguments()
-    @argument("-i", "--interval", type=float, help="Sampling period (in seconds), default 0.01.", default=0.01)
-    @argument("-p", "--plot", action='store_true', help="Plot the memory profile.")
-    @argument("profile_id", type=str, help="Profile identifier to label the results.")
+    @argument("-v", "--verbose",
+              action='store_true',
+              help="Enable verbosity.")
+    @argument("-i", "--interval",
+              type=float,
+              help="Sampling period (in seconds), default 0.01.",
+              default=0.01)
+    @argument("-p", "--plot",
+              action='store_true',
+              help="Plot the memory profile.")
+    @argument("profile_id",
+              help="Profile label. Format: id0-id1")
     @cell_magic
     def mprof_run(self, line: str, cell: str):
         """Run memory profiler during cell execution. (*cell_magic*)"""
         args = parse_argstring(self.mprof_run, line)
         interval = args.interval
-        line = args.profile_id
+        line = args.profile_id.replace("\"", "").replace("\'", "")
+        if line.count(sep) != 1:
+            raise AttributeError("The memory profile label is incorrect!")
 
         child_conn, parent_conn = Pipe()
+        l0, l1 = line.split(sep)
 
-        p = Process(target=sampling_memory, args=(child_conn, os.getpid(), interval))
+        p = Process(target=sampling_memory, args=(child_conn, os.getpid(), interval, l0, l1))
         p.daemon = True
+
+        gcold = gc.isenabled()
+        if gcold:
+            gc.collect()
+        gc.disable()
         p.start()
         parent_conn.recv()  # Check if sampling process starts
-        self.ip.run_cell(cell)
-        parent_conn.send(0)  # Stop sampling memory
-
+        try:
+            self.ip.run_cell(cell)
+        finally:
+            parent_conn.send(0)  # Stop sampling memory
         profile = parent_conn.recv()
-        self.profiles[line] = profile
-        print(f"memprofiler: used {profile['m_delta']:.2f} MiB RAM "
-              f"(peak of {profile['m_peak']:.2f} MiB) in {profile['t_delta']:.4f} s, "
-              f"total RAM usage {profile['m_total']:.2f} MiB")
+        if gcold:
+            gc.enable()
+
+        self.profiles[profile.l0 + sep + profile.l1] = profile
+        if (args.verbose):
+            print(f"memprofiler: used {profile.memory_delta:.2f} MiB RAM "
+                  f"(peak of {profile.memory_peak:.2f} MiB) in {profile.time_delta:.4f} s, "
+                  f"total RAM usage {profile.memory_total:.2f} MiB")
 
         if args.plot:
             self.mprof_plot(line)
 
     @magic_arguments()
-    @argument("-t", "--title", type=str, help="String shown as plot title.", default="Memory profile")
-    @argument("profile_ids", type=str, nargs="+", help="Profile identifiers made by mprof_run. Supports regex.")
+    @argument("-t", "--title",
+              default="Memory profile",
+              help="String shown as plot title.")
+    @argument("--groupby",
+              type=int,
+              default=1,
+              choices=[0, 1],
+              help="Identifier number used to group the results, default 1.")
+    @argument("profile_ids",
+              nargs="+",
+              help="Profile labels made by mprof_run. Supports regex.")
     @line_magic
     def mprof_plot(self, line: str):
-        """Plot memory profiler results. (*line_magic*)"""
+        """Plot detailed memory profiler results. (*line_magic*)"""
         args = parse_argstring(self.mprof_plot, line)
 
         # Find regex matches
-        keys = self.profiles.keys()
-        matches = set()
-        for regex in args.profile_ids:
-            matches.update([string for string in keys if re.match(regex, string)])
+        matches = self.parse_regex(args.profile_ids, args)
 
         # Plot memory profiles
-        fig = go.Figure()
-        for key in sorted(matches):
-            y = self.profiles[key]["m_prof"]
-            x = self.profiles[key]["t_prof"]
-            fig.add_trace(go.Scatter(x=x, y=y, mode="lines", name=key))
-
-        fig.update_layout(
-            title={
-                'text': args.title.replace("\"", "").replace("\'", ""),
-                'y': 0.9,
-                'x': 0.5,
-                'xanchor': 'center',
-                'yanchor': 'top'
-            },
-            xaxis_title="Time (in seconds)",
-            yaxis_title="Memory used (in MiB)",
-        )
-
+        fig = line_chart(matches, args)
+        fig = update_layout(fig, args)
         fig.show()
+
+    @magic_arguments()
+    @argument("-t", "--title",
+              default="Memory profile",
+              help="String shown as plot title.")
+    @argument("--variable",
+              default='memory',
+              choices=['time', 'memory'],
+              help="Variable to plot, default \'memory\'.")
+    @argument("--barmode",
+              default='group',
+              choices=['group', 'stack'],
+              help="Bar char mode, default \'group\'.")
+    @argument("--groupby",
+              type=int,
+              default=1,
+              choices=[0, 1],
+              help="Identifier number used to group the results, default 1.")
+    @argument("profile_ids", nargs="+", help="Profile labels made by mprof_run. Supports regex.")
+    @line_magic
+    def mprof_barplot(self, line: str):
+        """Plot only-memory or only-time results in a bar chart. (*line_magic*)"""
+        args = parse_argstring(self.mprof_barplot, line)
+
+        # Find regex matches
+        matches = self.parse_regex(args.profile_ids, args)
+
+        # Plot results
+        fig = bar_chart(matches, args)
+        fig = update_layout(fig, args)
+        fig.show()
+
+    def parse_regex(self, profile_ids, args):
+        l0 = "l0" if args.groupby == 1 else "l1"
+        l1 = "l1" if args.groupby == 1 else "l0"
+        matches = set(itertools.chain.from_iterable([e for e in self.profiles.values() if re.match(regex, e.l0 + sep + e.l1)] for regex in profile_ids))
+        groups = sorted(set(map(lambda x: getattr(x, l0), matches)))
+        g_matches = [(g, sorted([x for x in matches if getattr(x, l0) == g], key=lambda x: (getattr(x, l0), getattr(x, l1)))) for g in groups]
+        return g_matches
