@@ -34,24 +34,62 @@ Run memory profiler during cell execution. (*cell_magic*)
         Profile identifier to label the results.
 
 - optional arguments:
-
+    -   -v, --verbose \
+        Enable verbosity.
+        
     - *-i INTERVAL*, *--interval INTERVAL* \
         Sampling period (in seconds), default 0.01.
-
+      
     - *-p*, *--plot* \
         Plot the memory profile.
 
 
 ### mprof_plot
 
-*%mprof_plot [-t TITLE] profile_ids [profile_ids ...]*
+*%mprof_plot [-t TITLE] [--variable {time,memory}] profile_ids [profile_ids ...]*
 
-Plot memory profiler results. (*line_magic*)
+Plot detailed memory profiler results. (*line_magic*)
 
 - positional arguments:
+  
     - *profile_ids* \
         Profile identifiers made by mprof_run. Supports regex.
 
+- optional arguments:
+  
+    - *-t TITLE*, *--title TITLE* \
+        String shown as plot title.
+      
+    - *--groupby <{0,1}>* \
+        Identifier number used to group the results, default 1.
+
+
+### mprof_barplot  
+
+*%mprof_barplot [-t TITLE] [--variable {time,memory}]
+                     [--barmode {group,stack}] [--groupby {0,1}]
+                     profile_ids [profile_ids ...]*
+
+Plot only-memory or only-time results in a bar chart. (*line_magic*)
+
+- positional arguments:
+  
+    - *profile_ids* \
+        Profile labels made by mprof_run. Supports regex.
+
+- optional arguments:
+  
+    - *-t TITLE*, *--title TITLE* \
+        String shown as plot title.
+      
+    - *--variable <{time,memory}>* \
+        Variable to plot, default 'memory'.
+  
+    - *--barmode <{group,stack}>* \
+        Bar char mode, default 'group'.
+  
+    - *--groupby <{0,1}>* \
+        Identifier number used to group the results, default 1.
 
 ## Contributing
 
