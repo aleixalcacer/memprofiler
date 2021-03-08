@@ -25,7 +25,7 @@ A basic example of how to use this extension can be found in
 
 ### mprof_run
 
-*%%mprof_run [-i INTERVAL] [-p] profile_id*
+*%%mprof_run [-q] [-i INTERVAL] [-p] profile_id*
 
 Run memory profiler during cell execution. (*cell_magic*)
 
@@ -34,8 +34,8 @@ Run memory profiler during cell execution. (*cell_magic*)
         Profile identifier to label the results.
 
 - optional arguments:
-    -   -v, --verbose \
-        Enable verbosity.
+    - *-q*, *--quiet* \
+        Suppress verbosity.
         
     - *-i INTERVAL*, *--interval INTERVAL* \
         Sampling period (in seconds), default 0.01.

@@ -152,9 +152,9 @@ class MemProfiler(Magics):
 
 
     @magic_arguments()
-    @argument("-v", "--verbose",
+    @argument("-q", "--quiet",
               action='store_true',
-              help="Enable verbosity.")
+              help="Suppress verbosity.")
     @argument("-i", "--interval",
               type=float,
               help="Sampling period (in seconds), default 0.01.",
@@ -194,7 +194,7 @@ class MemProfiler(Magics):
             gc.enable()
 
         self.profiles[profile.l0 + sep + profile.l1] = profile
-        if (args.verbose):
+        if not args.quiet:
             print(f"memprofiler: used {profile.memory_delta:.2f} MiB RAM "
                   f"(peak of {profile.memory_peak:.2f} MiB) in {profile.time_delta:.4f} s, "
                   f"total RAM usage {profile.memory_total:.2f} MiB")
