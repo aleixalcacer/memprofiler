@@ -46,7 +46,7 @@ Run memory profiler during cell execution. (*cell_magic*)
 
 ### mprof_plot
 
-*%mprof_plot [-t TITLE] [--variable {time,memory}] profile_ids [profile_ids ...]*
+*%mprof_plot [-t TITLE] [--groupby {0,1}] profile_ids [profile_ids ...]*
 
 Plot detailed memory profiler results. (*line_magic*)
 
