@@ -15,7 +15,7 @@ import gc
 
 colors = px.colors.qualitative.Set1
 dashes = ['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']
-sep = "&&"
+sep = ":"
 tmp_id = "profile_id"
 
 
@@ -224,9 +224,6 @@ class MemProfiler(Magics):
 
         if args.plot:
             self.mprof_plot(line)
-
-        if len(line_tmp) != 2:
-            del self.profiles[profile.l0 + sep + profile.l1]
 
     @magic_arguments()
     @argument("-t", "--title",
