@@ -1,5 +1,7 @@
 # Releasing
 
+* Chack that the [README](README.md) are up-to-date.
+  
 * Check that `setup.py` contains the correct version number.
 
 * Commit the changes:

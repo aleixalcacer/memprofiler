@@ -25,13 +25,16 @@ A basic example of how to use this extension can be found in
 
 ### mprof_run
 
-*%%mprof_run [-q] [-i INTERVAL] [-p] profile_id*
+*%mprof_run [-q] [-i INTERVAL] [-p] [profile_id]*
 
 Run memory profiler during cell execution. (*cell_magic*)
 
 - positional arguments:
     - *profile_id* \
-        Profile identifier to label the results.
+        Profile label. You can specify up to two keywords by separating them
+        with && (`keyword0&&keyword1`).
+        Only profile_ids with two keywords can be used in plot-related
+        functions.
 
 - optional arguments:
     - *-q*, *--quiet* \

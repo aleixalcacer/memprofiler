@@ -15,7 +15,8 @@ import gc
 
 colors = px.colors.qualitative.Set1
 dashes = ['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']
-sep = "-"
+sep = "&&"
+tmp_id = "profile_id"
 
 
 def line_chart(matches: list, args):
@@ -27,7 +28,11 @@ def line_chart(matches: list, args):
         for j, e in enumerate(matches):
             x = e.time_prof
             y = e.memory_prof
-            fig.add_trace(go.Scatter(name=getattr(e, l0) + ": " + getattr(e, l1),
+            name = getattr(e, l0)
+            if getattr(e, l1) != "":
+                name += ": " + getattr(e, l1)
+
+            fig.add_trace(go.Scatter(name=name,
                                      x=x,
                                      y=y,
                                      mode="lines",
@@ -163,18 +168,36 @@ class MemProfiler(Magics):
               action='store_true',
               help="Plot the memory profile.")
     @argument("profile_id",
-              help="Profile label. Format: id0-id1")
+              nargs='?',
+              help="Profile label. You can specify up to "
+                   "two keywords by separating them with && (keyword0&&keyword1). "
+                   "Only profile_ids with two keywords can be used in plot-related functions.")
     @cell_magic
     def mprof_run(self, line: str, cell: str):
         """Run memory profiler during cell execution. (*cell_magic*)"""
         args = parse_argstring(self.mprof_run, line)
         interval = args.interval
-        line = args.profile_id.replace("\"", "").replace("\'", "")
-        if line.count(sep) != 1:
-            raise AttributeError("The memory profile label is incorrect!")
+
+        line = args.profile_id
+        if line is None:
+            line = tmp_id
+        else:
+            line.replace("\"", "").replace("\'", "")
+
+        if line.count(sep) > 1:
+            raise AttributeError("The memory profile label is incorrect! "
+                                 "See help for more info (%%mprof_run?).")
+
+        line_tmp = line.split(sep)
+        l0, l1 = "", ""
+        if len(line_tmp) > 2:
+            raise AttributeError
+        elif len(line_tmp) == 2:
+            l0, l1 = line_tmp[0], line_tmp[1]
+        elif len(line_tmp) == 1:
+            l0 = line_tmp[0]
 
         child_conn, parent_conn = Pipe()
-        l0, l1 = line.split(sep)
 
         p = Process(target=sampling_memory, args=(child_conn, os.getpid(), interval, l0, l1))
         p.daemon = True
@@ -201,6 +224,9 @@ class MemProfiler(Magics):
 
         if args.plot:
             self.mprof_plot(line)
+
+        if len(line_tmp) != 2:
+            del self.profiles[profile.l0 + sep + profile.l1]
 
     @magic_arguments()
     @argument("-t", "--title",
