@@ -15,7 +15,7 @@ import gc
 
 colors = px.colors.qualitative.Set1
 dashes = ['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']
-sep = ":"
+sep = "::"
 tmp_id = "profile_id"
 
 
@@ -170,7 +170,7 @@ class MemProfiler(Magics):
     @argument("profile_id",
               nargs='?',
               help="Profile label. You can specify up to "
-                   "two keywords by separating them with && (keyword0&&keyword1). "
+                   f"two keywords by separating them with {sep} (keyword0{sep}keyword1). "
                    "Only profile_ids with two keywords can be used in plot-related functions.")
     @cell_magic
     def mprof_run(self, line: str, cell: str):

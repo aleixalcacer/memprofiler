@@ -33,7 +33,7 @@ Run memory profiler during cell execution. (*cell_magic*)
 - positional arguments:
     - *profile_id* \
         Profile label. You can specify up to two keywords by separating them
-        with && (`keyword0&&keyword1`).
+        with :: (`keyword0::keyword1`).
         Only profile_ids with two keywords can be used in plot-related
         functions.
 
