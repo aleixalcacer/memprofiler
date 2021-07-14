@@ -2,5 +2,6 @@
 psutil
 ipython
 plotly
+pandas  # plotly.express
 # examples
 numpy
